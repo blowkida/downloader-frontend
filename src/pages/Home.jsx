@@ -16,7 +16,7 @@ const Home = () => {
     setVideoData(null);
 
     try {
-      const response = await axios.post("https://downloader-backend-2.onrender.com/api/fetch", {
+      const response = await axios.post("https://downloader-backend-2.onrender.com/api/fetch-info", {
         url,
       });
 
