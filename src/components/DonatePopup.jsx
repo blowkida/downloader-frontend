@@ -8,7 +8,7 @@ export default function DonatePopup({ onClose }) {
         <h2 className="text-lg font-bold mb-4 text-orange-600">Support Our Work</h2>
         <img src="/qr-code.png" alt="QR Code" className="w-40 mx-auto mb-4" />
         <p className="text-sm text-gray-700 text-center">UPI ID: <strong>yourupi@upi</strong></p>
-        <p className="text-sm text-gray-700 text-center">PayPal: <strong>yourpaypal@email.com</strong></p>
+        <p className="text-sm text-gray-700 text-center">PayPal: <strong>manishants@gmail.com</strong></p>
       </div>
     </div>
   );

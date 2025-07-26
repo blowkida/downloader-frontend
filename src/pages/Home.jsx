@@ -55,13 +55,13 @@ export default function Home() {
     <div className="min-h-screen bg-orange-50 flex flex-col justify-between">
       {showDonate && <DonatePopup onClose={() => setShowDonate(false)} />}
 
-      <header className="bg-white/40 backdrop-blur-md fixed top-0 left-0 w-full z-50 px-6 py-4 shadow-sm flex justify-between items-center">
+      <header className="bg-orange-400 backdrop-blur-md fixed top-0 left-0 w-full z-50 px-6 py-4 shadow-sm flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <img src="/ss-youtube-logo.png" alt="Logo" className="w-8 h-8" />
-          <span className="text-xl font-bold text-orange-600">Link Downloader</span>
+          <span className="text-xl font-bold text-orange-600">SS YouTube</span>
           <span className="text-xs text-gray-500">V1.0</span>
         </div>
-        <nav className="space-x-6 text-sm font-medium text-gray-700">
+        <nav className="space-x-6 text-sm font-medium text-white">
           <a href="#">ADDED SITES</a>
           <button onClick={() => setShowDonate(true)}>DONATE</button>
           <a href="#">SUPPORT</a>
@@ -69,26 +69,26 @@ export default function Home() {
         </nav>
       </header>
 
-      <main className="pt-28 flex flex-col items-center justify-center flex-1 px-4 py-10 bg-orange-100">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2"># Online Video Download Helper # - YouTube Video Downloader</h1>
-        <p className="text-sm text-orange-500 mb-2">Paste any video URL to download</p>
-        <p className="text-xs text-gray-600 mb-6">It's 100% Safe & Free to Use.</p>
+      <main className="pt-28 flex flex-col items-center justify-center flex-1 px-4 py-10 bg-orange-500">
+        <h1 className="text-3xl font-bold text-gray-100 mb-2">YouTube Video Downloader</h1>
+        <p className="text-sm text-gray-900 mb-2">Paste any video URL to download</p>
 
         <div className="w-full max-w-2xl flex gap-2">
           <input
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Search or enter any URL to download"
-            className="flex-grow px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            placeholder="Paste any video URL to download"
+            className="flex-grow px-4 py-3 border border-red-900 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
           <button
             onClick={handleDownload}
-            className="px-6 py-3 bg-orange-500 text-white font-semibold rounded-md shadow-md hover:bg-orange-600"
+            className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-red-600"
           >
             DOWNLOAD
           </button>
         </div>
+        <p className="text-xl text-gray-100 mb-2">It's 100% Safe & Free to Use.</p>
 
         {loading && (
           <div className="mt-6 w-full max-w-md">
