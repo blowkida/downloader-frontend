@@ -62,7 +62,7 @@ export default function Home() {
     <div className="min-h-screen bg-orange-50 flex flex-col justify-between">
       <header className="bg-white border-b px-6 py-4 shadow-sm flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+          <img src="/ss-youtube-logo.png" alt="Logo" className="w-8 h-8" />
           <span className="text-xl font-bold text-orange-600">Link Downloader</span>
           <span className="text-xs text-gray-500">V1.0</span>
         </div>
