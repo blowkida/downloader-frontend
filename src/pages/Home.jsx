@@ -1,159 +1,105 @@
-import React, { useState } from 'react';
-import DonatePopup from '../components/DonatePopup';
+// frontend/src/pages/Home.jsx
+import React, { useState } from "react";
+import axios from "axios";
 
-export default function Home() {
-  const [url, setUrl] = useState('');
+const Home = () => {
+  const [url, setUrl] = useState("");
+  const [videoData, setVideoData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [videoInfo, setVideoInfo] = useState(null);
-  const [error, setError] = useState(null);
-  const [showDonate, setShowDonate] = useState(false);
+  const [error, setError] = useState("");
 
   const handleDownload = async () => {
-    if (!url) return alert('Please enter a valid URL.');
+    if (!url.trim()) return;
 
-    setError(null);
     setLoading(true);
-    setProgress(0);
-    setVideoInfo(null);
-
-    const interval = setInterval(() => {
-      setProgress((prev) => (prev >= 95 ? prev : prev + 1));
-    }, 100);
+    setError("");
+    setVideoData(null);
 
     try {
-      const response = await fetch('https://downloader-backend-2.onrender.com/api/download', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+      const response = await axios.post("https://downloader-backend-2.onrender.com/api/fetch", {
+        url,
       });
 
-      const data = await response.json();
-      clearInterval(interval);
-      setProgress(100);
+      if (response.data && response.data.title) {
+        setVideoData(response.data);
+      } else {
+        setError("No video info received.");
+      }
+    } catch (err) {
+      setError("Failed to fetch video data.");
+    } finally {
       setLoading(false);
-
-      data.success ? setVideoInfo(data.video) : setError(data.error || 'Failed to fetch video info');
-    } catch {
-      clearInterval(interval);
-      setProgress(0);
-      setLoading(false);
-      setError('Server error occurred.');
     }
   };
 
-  const handleRealDownload = (url, title) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${title}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
   return (
-    <div className="min-h-screen bg-orange-50 flex flex-col justify-between">
-      {showDonate && <DonatePopup onClose={() => setShowDonate(false)} />}
+    <div className="min-h-screen bg-orange-50 flex flex-col items-center justify-center p-4">
+      <h1 className="text-3xl font-bold mb-6 text-orange-600">Smart Downloader</h1>
+      <div className="flex w-full max-w-xl">
+        <input
+          type="text"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Paste video URL here..."
+          className="flex-1 p-3 rounded-l-lg border border-orange-300"
+        />
+        <button
+          onClick={handleDownload}
+          disabled={loading}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-r-lg"
+        >
+          {loading ? "Loading..." : "Fetch"}
+        </button>
+      </div>
 
-      <header className="bg-orange-400 backdrop-blur-md fixed top-0 left-0 w-full z-50 px-6 py-4 shadow-sm flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <img src="/ss-youtube-logo.png" alt="Logo" className="w-8 h-8" />
-          <span className="text-xl font-bold text-orange-600">SS YouTube</span>
-          <span className="text-xs text-gray-500">V1.0</span>
-        </div>
-        <nav className="space-x-6 text-sm font-medium text-white">
-          <a href="#">ADDED SITES</a>
-          <button onClick={() => setShowDonate(true)}>DONATE</button>
-          <a href="#">SUPPORT</a>
-          <a href="#">SETTINGS</a>
-        </nav>
-      </header>
+      {error && <p className="text-red-500 mt-4">{error}</p>}
 
-      <main className="pt-28 flex flex-col items-center justify-center flex-1 px-4 py-10 bg-orange-500">
-        <h1 className="text-3xl font-bold text-gray-100 mb-2">YouTube Video Downloader</h1>
-        <p className="text-sm text-gray-900 mb-2">Paste any video URL to download</p>
-
-        <div className="w-full max-w-2xl flex gap-2">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Paste any video URL to download"
-            className="flex-grow px-4 py-3 border border-red-900 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-          <button
-            onClick={handleDownload}
-            className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-red-600"
-          >
-            DOWNLOAD
-          </button>
-        </div>
-        <p className="text-xl text-gray-100 mb-2">It's 100% Safe & Free to Use.</p>
-
-        {loading && (
-          <div className="mt-6 w-full max-w-md">
-            <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-orange-500 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
+      {videoData && (
+        <div className="mt-8 w-full max-w-2xl bg-white p-6 rounded-xl shadow">
+          <div className="flex gap-4">
+            <img
+              src={videoData.thumbnail}
+              alt="thumbnail"
+              className="w-48 rounded-xl"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-orange-700">{videoData.title}</h2>
+              <p className="text-gray-500 mt-1">Duration: {videoData.duration}</p>
+              <p className="text-sm text-gray-400 mt-1">{videoData.extractor}</p>
             </div>
-            <p className="text-center text-sm text-gray-600 mt-1">Fetching... {progress}%</p>
           </div>
-        )}
 
-        {error && <p className="text-red-500 mt-4">{error}</p>}
-
-        {videoInfo && (
-          <div className="mt-8 w-full max-w-3xl bg-white p-4 shadow rounded-md">
-            <div className="flex gap-4 mb-4">
-              <img src={videoInfo.thumbnail} alt="Thumbnail" className="w-40 h-24 object-cover rounded" />
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">{videoInfo.title}</h2>
-                <p className="text-sm text-gray-500">{videoInfo.duration}</p>
-                <p className="text-xs text-gray-400 mt-1 italic">Source: {new URL(url).hostname}</p>
-              </div>
-            </div>
-            <table className="w-full text-sm text-left border-t">
-              <thead>
-                <tr className="bg-orange-100">
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Quality</th>
-                  <th className="px-3 py-2">Size</th>
-                  <th className="px-3 py-2">Download</th>
+          <table className="w-full mt-6 table-auto border-collapse">
+            <thead>
+              <tr className="bg-orange-100">
+                <th className="text-left p-2">Quality</th>
+                <th className="text-left p-2">Size</th>
+                <th className="text-left p-2">Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              {videoData.formats.map((format, idx) => (
+                <tr key={idx} className="border-b">
+                  <td className="p-2">{format.quality || "-"}</td>
+                  <td className="p-2">{format.size || "-"}</td>
+                  <td className="p-2">
+                    <a
+                      href={format.url}
+                      className="text-orange-500 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Download
+                    </a>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {videoInfo.formats.map((format, i) => (
-                  <tr key={i} className="border-t">
-                    <td className="px-3 py-2">{format.type}</td>
-                    <td className="px-3 py-2">{format.quality}</td>
-                    <td className="px-3 py-2">{format.size}</td>
-                    <td className="px-3 py-2">
-                      <button
-                        onClick={() => handleRealDownload(format.url, videoInfo.title)}
-                        className="bg-orange-500 text-white text-xs px-3 py-1 rounded hover:bg-orange-600"
-                      >
-                        Download
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
-
-      <footer className="bg-white border-t py-6 text-center text-sm text-orange-600 flex flex-col gap-2">
-        <div className="flex flex-wrap justify-center gap-6">
-          <a href="#">Add to home screen?</a>
-          <a href="#">Browser Bookmarklet?</a>
-          <a href="#">Request a website?</a>
-          <a href="#">Learn how to use?</a>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <p className="text-xs text-gray-400 mt-2">&copy; 2025 Link Downloader. All rights reserved.</p>
-      </footer>
+      )}
     </div>
   );
-}
+};
+
+export default Home;
