@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DonatePopup from '../components/DonatePopup';
 
 export default function Home() {
   const [url, setUrl] = useState('');
@@ -6,6 +7,7 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [videoInfo, setVideoInfo] = useState(null);
   const [error, setError] = useState(null);
+  const [showDonate, setShowDonate] = useState(false);
 
   const handleDownload = async () => {
     if (!url) return alert('Please enter a valid URL.');
@@ -16,18 +18,13 @@ export default function Home() {
     setVideoInfo(null);
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) return prev;
-        return prev + 1;
-      });
+      setProgress((prev) => (prev >= 95 ? prev : prev + 1));
     }, 100);
 
     try {
       const response = await fetch('https://downloader-backend-2.onrender.com/api/download', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
 
@@ -36,12 +33,8 @@ export default function Home() {
       setProgress(100);
       setLoading(false);
 
-      if (data.success) {
-        setVideoInfo(data.video);
-      } else {
-        setError(data.error || 'Failed to fetch video info');
-      }
-    } catch (err) {
+      data.success ? setVideoInfo(data.video) : setError(data.error || 'Failed to fetch video info');
+    } catch {
       clearInterval(interval);
       setProgress(0);
       setLoading(false);
@@ -60,7 +53,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-orange-50 flex flex-col justify-between">
-      <header className="bg-white border-b px-6 py-4 shadow-sm flex justify-between items-center">
+      {showDonate && <DonatePopup onClose={() => setShowDonate(false)} />}
+
+      <header className="bg-white/40 backdrop-blur-md fixed top-0 left-0 w-full z-50 px-6 py-4 shadow-sm flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <img src="/ss-youtube-logo.png" alt="Logo" className="w-8 h-8" />
           <span className="text-xl font-bold text-orange-600">Link Downloader</span>
@@ -68,15 +63,16 @@ export default function Home() {
         </div>
         <nav className="space-x-6 text-sm font-medium text-gray-700">
           <a href="#">ADDED SITES</a>
-          <a href="#">DONATE</a>
+          <button onClick={() => setShowDonate(true)}>DONATE</button>
           <a href="#">SUPPORT</a>
           <a href="#">SETTINGS</a>
         </nav>
       </header>
 
-      <main className="flex flex-col items-center justify-center flex-1 px-4 py-10">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2"># Online Video Download Helper #</h1>
-        <p className="text-sm text-orange-500 mb-6">Paste any video URL to download</p>
+      <main className="pt-28 flex flex-col items-center justify-center flex-1 px-4 py-10 bg-orange-100">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2"># Online Video Download Helper # - YouTube Video Downloader</h1>
+        <p className="text-sm text-orange-500 mb-2">Paste any video URL to download</p>
+        <p className="text-xs text-gray-600 mb-6">It's 100% Safe & Free to Use.</p>
 
         <div className="w-full max-w-2xl flex gap-2">
           <input
