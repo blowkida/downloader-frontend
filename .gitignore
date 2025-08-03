@@ -14,18 +14,21 @@ yarn-error.log*
 # Build outputs
 dist/
 build/
+.next/
+out/
 
 # Temporary files
-temp/
 *.tmp
 *.temp
+temp/
+.cache/
 
-# FFmpeg binary
+# FFmpeg files
 ffmpeg.zip
 ffmpeg/
 
 # Logs
-logs/
+logs
 *.log
 
 # OS generated files
@@ -43,9 +46,8 @@ Thumbs.db
 *.swp
 *.swo
 
-# Downloaded videos (temp directory)
+# Downloaded videos
 server/temp/*.mp4
-server/temp/*.webm
-server/temp/*.m4a
 server/temp/*.mp3
-!server/temp/test.txt
+server/temp/*.webm
+server/temp/*.mkv
