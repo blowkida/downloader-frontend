@@ -51,3 +51,6 @@ server/temp/*.mp4
 server/temp/*.mp3
 server/temp/*.webm
 server/temp/*.mkv
+
+# YouTube cookies file (contains sensitive data)
+youtube-cookies.txt
